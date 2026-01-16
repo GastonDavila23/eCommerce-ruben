@@ -1,173 +1,61 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Plus, Trash2, Camera, Loader2, Clock, ListChecks, DollarSign, Package, UtensilsCrossed } from 'lucide-react';
+import ProductForm from '@/components/ProductForm';
+import CategoryForm from '@/components/CategoryForm';
+import ComboForm from '@/components/ComboForm';
+import ScheduleForm from '@/components/ScheduleForm';
 
 export default function AdminSecreto() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    // Traemos categorías y productos con el nombre de su categoría
-    const { data: cat } = await supabase.from('categories').select('*').order('name');
-    const { data: prod } = await supabase.from('products').select('*, categories(name)').order('created_at', { ascending: false });
-    if (cat) setCategories(cat);
-    if (prod) setProducts(prod);
-  };
-
-  const handleUpload = async (e: any) => {
-    e.preventDefault();
-    setLoading(true);
-    const form = e.target;
-    const file = form.image.files[0];
-    let imageUrl = '';
-
-    try {
-      // 1. Subida de Imagen al Bucket 'products'
-      if (file) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('products')
-          .upload(fileName, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data } = supabase.storage.from('products').getPublicUrl(fileName);
-        imageUrl = data.publicUrl;
-      }
-
-      // 2. Procesar ingredientes (de texto separado por comas a Array JSONB)
-      const ingredientsArray = form.ingredients.value
-        .split(',')
-        .map((i: string) => i.trim())
-        .filter((i: string) => i !== "");
-
-      // 3. Insertar en la Base de Datos
-      const { error: dbError } = await supabase.from('products').insert([{
-        name: form.name.value,
-        description: form.description.value,
-        ingredients: ingredientsArray, // Supabase lo recibe como JSONB
-        price: parseFloat(form.price.value),
-        cooking_time: form.cooking_time.value || "15-20 min",
-        category_id: form.category.value,
-        image_url: imageUrl
-      }]);
-
-      if (dbError) throw dbError;
-
-      alert("¡Producto cargado con éxito! 🍕");
-      form.reset();
-      fetchData(); // Refresca la lista de abajo
-    } catch (err: any) {
-      alert("Error: " + err.message);
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteProduct = async (id: string) => {
-    if (!confirm('¿Seguro que querés borrar este producto?')) return;
-    const { error } = await supabase.from('products').delete().eq('id', id);
-    if (!error) fetchData();
-  };
-
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white p-6 pb-24 font-sans">
       <div className="max-w-md mx-auto">
         <header className="mb-10 pt-4 text-center">
-          <h1 className="text-3xl font-black italic tracking-tighter">RUBÉN ADMIN 🤫</h1>
-          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">Gestión de Carta</p>
+          <h1 className="text-4xl font-black italic tracking-tighter">RUBÉN ADMIN 🤫</h1>
+          <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em] mt-2">
+            Gestión Integral de la Carta
+          </p>
         </header>
-        
-        {/* Formulario de Carga Estilo Card Premium */}
-        <section className="bg-white rounded-[2.5rem] p-8 space-y-5 mb-12 shadow-2xl border border-gray-100">
-          <h2 className="text-black text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-2">
-            <Plus size={14} className="text-gray-400" /> Cargar Nuevo Plato
-          </h2>
-          
-          <form onSubmit={handleUpload} className="space-y-4">
-            <div className="relative">
-              <Package className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-              <input name="name" placeholder="Nombre (ej: Pizza Muzzarella)" className="w-full bg-gray-50 border-none rounded-2xl pl-12 pr-4 py-4 text-sm text-black placeholder:text-gray-400 focus:ring-2 focus:ring-black transition-all" required />
+
+        <div className="space-y-16">
+          {/* Sección 1: Categorías */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px bg-gray-800 flex-1"></div>
+              <h2 className="text-[10px] font-black uppercase text-blue-500 tracking-[0.2em]">Categorías</h2>
+              <div className="h-px bg-gray-800 flex-1"></div>
             </div>
+            <CategoryForm />
+          </section>
 
-            <textarea name="description" placeholder="Descripción breve para la carta..." className="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm text-black placeholder:text-gray-400 focus:ring-2 focus:ring-black transition-all h-24 resize-none" required />
-
-            <div className="relative">
-              <ListChecks className="absolute left-4 top-4 text-gray-300" size={18} />
-              <textarea name="ingredients" placeholder="Ingredientes (separados por coma: Jamón, Queso, Masa)" className="w-full bg-gray-50 border-none rounded-2xl pl-12 pr-4 py-4 text-sm text-black placeholder:text-gray-400 focus:ring-2 focus:ring-black transition-all h-20 resize-none" required />
+          {/* Sección 2: Productos Individuales */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px bg-gray-800 flex-1"></div>
+              <h2 className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.2em]">Productos</h2>
+              <div className="h-px bg-gray-800 flex-1"></div>
             </div>
+            <ProductForm />
+          </section>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                <input name="price" type="number" placeholder="Precio" className="w-full bg-gray-50 border-none rounded-2xl pl-12 pr-4 py-4 text-sm text-black placeholder:text-gray-400 focus:ring-2 focus:ring-black transition-all" required />
-              </div>
-              <div className="relative">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                <input name="cooking_time" placeholder="Tiempo" defaultValue="15-20 min" className="w-full bg-gray-50 border-none rounded-2xl pl-12 pr-4 py-4 text-sm text-black placeholder:text-gray-400 focus:ring-2 focus:ring-black transition-all" />
-              </div>
+          {/* Sección 3: Combos Imperdibles */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px bg-gray-800 flex-1"></div>
+              <h2 className="text-[10px] font-black uppercase text-orange-500 tracking-[0.2em]">Combos Slider</h2>
+              <div className="h-px bg-gray-800 flex-1"></div>
             </div>
+            <ComboForm />
+          </section>
 
-            <select name="category" className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm text-black appearance-none focus:ring-2 focus:ring-black transition-all font-medium" required>
-              <option value="">Seleccionar Categoría</option>
-              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-
-            <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-3xl p-6 transition-colors hover:border-black group">
-              <label className="flex flex-col items-center justify-center cursor-pointer gap-2">
-                <Camera size={28} className="text-gray-300 group-hover:text-black transition-colors" />
-                <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest group-hover:text-black transition-colors">Seleccionar Foto</span>
-                <input name="image" type="file" accept="image/*" className="hidden" />
-              </label>
+          {/* Sección 4: Horarios */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px bg-gray-800 flex-1"></div>
+              <h2 className="text-[10px] font-black uppercase text-purple-500 tracking-[0.2em]">Disponibilidad</h2>
+              <div className="h-px bg-gray-800 flex-1"></div>
             </div>
-
-            <button disabled={loading} className="w-full bg-black text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2 disabled:bg-gray-300">
-              {loading ? <Loader2 className="animate-spin" /> : 'PUBLICAR PRODUCTO'}
-            </button>
-          </form>
-        </section>
-
-        {/* Listado de Productos (CRUD) */}
-        <section className="space-y-4">
-          <h2 className="text-[10px] font-black uppercase text-gray-500 tracking-[0.3em] px-4 flex items-center gap-2">
-            <UtensilsCrossed size={12} /> Productos Online ({products.length})
-          </h2>
-
-          <div className="grid gap-3">
-            {products.map(p => (
-              <div key={p.id} className="flex justify-between items-center bg-[#141414] border border-white/5 p-4 rounded-[2rem] group hover:border-white/20 transition-all">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gray-800 rounded-2xl overflow-hidden border border-white/5">
-                    {p.image_url ? (
-                      <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center"><Package size={20} className="text-gray-600"/></div>
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm leading-none mb-1">{p.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black text-gray-600 uppercase italic tracking-tighter">${p.price}</span>
-                      <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
-                      <span className="text-[9px] font-bold text-gray-600 uppercase tracking-widest">{p.categories?.name}</span>
-                    </div>
-                  </div>
-                </div>
-                <button onClick={() => deleteProduct(p.id)} className="p-3 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all">
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
+            <ScheduleForm />
+          </section>
+        </div>
       </div>
     </div>
   );
