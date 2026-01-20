@@ -1,17 +1,20 @@
-import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
+import './globals.css';
+import { CartProvider } from '@/context/CartContext';
+import QueryProvider from '@/providers/QueryProvider';
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body>
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <QueryProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 'use client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Flame, CheckCircle2 } from 'lucide-react';
-import QuantitySelector from './QuantitySelector';
+import QuantitySelector from '@/components/ui/QuantitySelector';
 
 export default function ProductModal({ product, onClose }: any) {
   if (!product) return null;

@@ -1,8 +1,8 @@
 'use client';
-import ProductForm from '@/components/ProductForm';
-import CategoryForm from '@/components/CategoryForm';
-import ComboForm from '@/components/ComboForm';
-import ScheduleForm from '@/components/ScheduleForm';
+import ProductForm from '@/app/admin/secret/components/ProductForm';
+import CategoryForm from '@/app/admin/secret/components/CategoryForm';
+import ComboForm from '@/app/admin/secret/components/ComboForm';
+import ScheduleForm from '@/app/admin/secret/components/ScheduleForm';
 
 export default function AdminSecreto() {
   return (

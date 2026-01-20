@@ -18,14 +18,19 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
 
   const sendWhatsApp = () => {
     if (!isOpenBusiness) return;
-    const phone = "5492616948318"; 
+    const phone = "5492634325471";
     const items = cart.map((i: any) => `• ${i.qty}x ${i.name}`).join('\n');
     let msg = `¡Hola Rubén! 👋 Mi pedido:\n\n${items}\n\n`;
     msg += `--- \n`;
-    msg += `📍 *Entrega:* ${deliveryMethod === 'delivery' ? 'Envío' : 'Retiro'}\n`;
+    msg += `📍 *Entrega:* ${deliveryMethod === 'delivery' ? 'Delivery' : 'Local'}\n`;
     msg += `💳 *Pago:* ${paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}\n`;
-    if (kioscoExtra.trim()) msg += `🍬 *Extra Kiosco:* ${kioscoExtra}\n`;
-    msg += `\n*Total: $${total}*\n`;
+    
+    if (kioscoExtra.trim()) {
+      msg += `🍬 *Extra Kiosco:* ${kioscoExtra}\n`;
+      msg += `_(Por favor, confírmame el precio de los extras)_\n`;
+    }
+    
+    msg += `\n*Total Comida: $${total}*\n`;
     msg += `--- \n¿Me confirmás el pedido?`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
   };
@@ -54,12 +59,13 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
               initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
               className="bg-white w-full max-w-md rounded-t-[3rem] p-6 pb-10 max-h-[92vh] flex flex-col shadow-2xl overflow-y-auto no-scrollbar"
             >
+              {/* Header del Carrito */}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-black italic tracking-tighter uppercase">Tu Pedido</h2>
                 <button onClick={() => setIsOpen(false)} className="bg-gray-100 p-2 rounded-full"><X size={18} /></button>
               </div>
 
-              {/* Items reducidos para ahorrar espacio */}
+              {/* Lista de Productos */}
               <div className="space-y-3 mb-6">
                 {cart.length === 0 ? (
                   <p className="text-center text-gray-400 py-10 font-bold uppercase text-[9px] tracking-widest">Vacío</p>
@@ -82,7 +88,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
 
               {cart.length > 0 && (
                 <div className="space-y-5">
-                  {/* Selectores Minimalistas (Segmented Controls) */}
+                  {/* Selectores de Entrega y Pago */}
                   <div className="flex gap-4">
                     <div className="flex-1">
                       <p className="text-[8px] font-black uppercase text-gray-400 tracking-widest mb-2">Entrega</p>
@@ -100,7 +106,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                       <p className="text-[8px] font-black uppercase text-gray-400 tracking-widest mb-2">Pago</p>
                       <div className="bg-gray-100 p-1 rounded-xl flex gap-1">
                         <button onClick={() => setPaymentMethod('efectivo')} className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 transition-all ${paymentMethod === 'efectivo' ? 'bg-white shadow-sm text-black' : 'text-gray-400'}`}>
-                          <Banknote size={12} /> <span className="text-[9px] font-black uppercase italic">Cash</span>
+                          <Banknote size={12} /> <span className="text-[9px] font-black uppercase italic">Efectivo</span>
                         </button>
                         <button onClick={() => setPaymentMethod('transferencia')} className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 transition-all ${paymentMethod === 'transferencia' ? 'bg-white shadow-sm text-black' : 'text-gray-400'}`}>
                           <CreditCard size={12} /> <span className="text-[9px] font-black uppercase italic">Transf.</span>
@@ -109,7 +115,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                     </div>
                   </div>
 
-                  {/* Kiosco más compacto */}
+                  {/* Campo de Texto Kiosco */}
                   <div className="bg-gray-50 p-3 rounded-2xl flex items-start gap-3 border border-gray-100">
                     <Candy size={14} className="text-pink-500 mt-1 shrink-0" />
                     <textarea 
@@ -119,11 +125,27 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                       className="w-full bg-transparent text-[11px] font-bold outline-none resize-none h-10 placeholder:text-gray-300"
                     />
                   </div>
-
+                  {/* Resumen y Botón de Confirmar */}
                   <div className="pt-2">
-                    <div className="flex justify-between items-baseline mb-4">
-                      <span className="text-[9px] font-black uppercase text-gray-300 tracking-[0.2em]">Total Estimado</span>
-                      <span className="text-3xl font-black italic tracking-tighter leading-none">${total}</span>
+                    <div className="flex flex-col gap-1 mb-4">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-[9px] font-black uppercase text-gray-300 tracking-[0.2em]">Subtotal Comida</span>
+                        <span className="text-3xl font-black italic tracking-tighter leading-none">${total}</span>
+                      </div>
+                      
+                      {/* Aviso dinámico si hay extras */}
+                      {kioscoExtra.trim() && (
+                        <motion.div 
+                          initial={{ opacity: 0, x: -10 }} 
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex justify-between items-center"
+                        >
+                          <span className="text-[9px] font-black uppercase text-pink-500 tracking-[0.1em] flex items-center gap-1">
+                            <Candy size={10} /> + Extras Kiosco
+                          </span>
+                          <span className="text-[9px] font-bold text-pink-400 italic">Pendiente cotizar</span>
+                        </motion.div>
+                      )}
                     </div>
                     
                     <button 
@@ -133,7 +155,14 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                         isOpenBusiness ? 'bg-[#25D366] text-white shadow-lg shadow-green-500/20' : 'bg-gray-100 text-gray-400'
                       }`}
                     >
-                      {isOpenBusiness ? <><Send size={16} /> Confirmar pedido</> : <><Clock size={16} /> Local Cerrado</>}
+                      {isOpenBusiness ? (
+                        <>
+                          <Send size={16} /> 
+                          {kioscoExtra.trim() ? "Consultar Total Final" : "Confirmar pedido"}
+                        </>
+                      ) : (
+                        <><Clock size={16} /> Local Cerrado</>
+                      )}
                     </button>
                   </div>
                 </div>
