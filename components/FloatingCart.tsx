@@ -16,7 +16,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
     // Si el local está cerrado, no permitimos el envío
     if (!isOpenBusiness) return;
 
-    const phone = "2616948318";
+    const phone = "5492634325471";
     const items = cart.map((i: any) => `• ${i.qty}x ${i.name}`).join('\n');
     const msg = encodeURIComponent(`¡Hola Rubén! 👋 Mi pedido:\n\n${items}\n\n*Total a pagar: $${total}*\n\n¿Me confirmás el pedido?`);
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
