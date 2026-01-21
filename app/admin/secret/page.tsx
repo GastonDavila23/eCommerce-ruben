@@ -3,6 +3,7 @@ import ProductForm from '@/app/admin/secret/components/ProductForm';
 import CategoryForm from '@/app/admin/secret/components/CategoryForm';
 import ComboForm from '@/app/admin/secret/components/ComboForm';
 import ScheduleForm from '@/app/admin/secret/components/ScheduleForm';
+import QRGenerator from './components/QRGenerator';
 
 export default function AdminSecreto() {
   return (
@@ -16,6 +17,19 @@ export default function AdminSecreto() {
         </header>
 
         <div className="space-y-16">
+
+          {/* Sección 0: Generador de QR y Enlace */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px bg-gray-800 flex-1"></div>
+              <h2 className="text-[10px] font-black uppercase text-red-500 tracking-[0.2em]">
+                Generador de QR & Enlace
+              </h2>
+              <div className="h-px bg-gray-800 flex-1"></div>
+            </div>
+            <QRGenerator />
+          </section>
+
           {/* Sección 1: Categorías */}
           <section>
             <div className="flex items-center gap-3 mb-6">
