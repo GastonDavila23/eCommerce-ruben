@@ -37,7 +37,7 @@ export default function Header({ isOpen, categories, filter, setFilter }: Header
         <button
           onClick={() => setFilter(null)}
           className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border ${!filter
-              ? 'bg-black text-white border-black shadow-lg shadow-black/20'
+              ? 'bg-black text-white border-black'
               : 'bg-gray-50 text-gray-400 border-transparent'
             }`}
         >
