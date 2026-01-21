@@ -7,10 +7,15 @@ import { useCart } from '@/context/CartContext';
 
 export default function ProductCard({ product, isOpenBusiness, onOpenModal }: any) {
   const [isOpen, setIsOpen] = useState(false);
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart(); //
+
+  // Buscamos si el producto ya está en el carrito para decidir qué botón mostrar
+  const cartItem = cart.find((item: any) => item.id === product.id);
+  const isInCart = !!cartItem;
 
   return (
     <div className="border-b border-gray-50">
+      {/* CABECERA DEL ACORDEÓN */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full py-6 flex justify-between items-center text-left outline-none"
@@ -26,6 +31,7 @@ export default function ProductCard({ product, isOpenBusiness, onOpenModal }: an
         </motion.div>
       </button>
 
+      {/* CONTENIDO DESPLEGABLE */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -35,34 +41,37 @@ export default function ProductCard({ product, isOpenBusiness, onOpenModal }: an
             className="overflow-hidden"
           >
             <p className="text-sm text-gray-500 mb-6 italic pr-12 leading-relaxed">
-              {product.description || "Nuestra especialidad artesanal preparada con ingredientes frescos."}
+              {product.description || "Nuestra especialidad artesanal preparada con ingredientes frescos seleccionados por Rubén."}
             </p>
 
-            <div className="flex flex-col gap-6 pb-8">
-              {/* SELECTOR DE CANTIDAD LIMPIO */}
-              <div className="flex justify-start">
-                <QuantitySelector product={product} />
+            {/* GRILLA DE ACCIÓN ÚNICA: Aquí es donde eliminamos el botón extra */}
+            <div className="grid grid-cols-2 gap-3 w-full pb-8">
+              
+              <div className="w-full h-[52px]">
+                {!isInCart ? (
+                  /* BOTÓN AGREGAR INICIAL */
+                  <button
+                    onClick={() => addToCart(product)}
+                    disabled={!isOpenBusiness}
+                    className={`w-full h-full rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 ${
+                      isOpenBusiness ? 'bg-black text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    <Plus size={16} /> Agregar
+                  </button>
+                ) : (
+                  /* SELECTOR DE CANTIDAD: Solo aparece si isInCart es true */
+                  <QuantitySelector product={product} />
+                )}
               </div>
 
-              {/* GRILLA 50/50 - SIN BOTONES EXTRA */}
-              <div className="grid grid-cols-2 gap-3 w-full">
-                <button
-                  onClick={() => addToCart(product)}
-                  disabled={!isOpenBusiness}
-                  className={`py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 ${
-                    isOpenBusiness ? 'bg-black text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  <Plus size={16} /> Agregar
-                </button>
-
-                <button
-                  onClick={() => onOpenModal(product)}
-                  className="py-4 bg-gray-100 text-black rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-gray-200 active:scale-95 transition-all"
-                >
-                  <Info size={16} /> Detalles
-                </button>
-              </div>
+              {/* BOTÓN DE DETALLES */}
+              <button
+                onClick={() => onOpenModal(product)}
+                className="h-[52px] bg-gray-100 text-black rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-gray-200 active:scale-95 transition-all"
+              >
+                <Info size={16} /> Detalles
+              </button>
             </div>
           </motion.div>
         )}
