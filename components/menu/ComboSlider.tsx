@@ -1,74 +1,95 @@
 'use client';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Clock } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
+import { Sparkles, Plus } from 'lucide-react';
 
-interface ComboSliderProps {
-  combos: any[];
-  filter: string | null;
-  isOpen: boolean;
-}
-
-export default function ComboSlider({ combos, filter, isOpen }: ComboSliderProps) {
+export default function ComboSlider({ combos, isOpen }: any) {
   const { addToCart } = useCart();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const width = scrollRef.current.offsetWidth;
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const index = Math.round(scrollLeft / (width * 0.85)); 
+      setActiveIndex(index);
+    }
+  };
+
+  if (!combos || combos.length === 0) return null;
 
   return (
-    <AnimatePresence>
-      {!filter && combos.length > 0 && (
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 px-6 overflow-hidden"
-        >
-          <h2 className="text-[10px] font-black uppercase text-gray-300 tracking-[0.3em] mb-4 flex items-center gap-2">
-            <Clock size={12} /> Promos por Tiempo Limitado
-          </h2>
-          <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar snap-x snap-mandatory">
-            {combos.map((combo) => (
-              <div
-                key={combo.id}
-                className="min-w-[100%] relative aspect-[12/8] bg-black rounded-[2.5rem] overflow-hidden snap-center"
-              >
-                {combo.image_url && (
-                  <img 
-                    src={combo.image_url} 
-                    alt={combo.title} 
-                    className="w-full h-full object-cover opacity-70" 
-                  />
-                )}
+    <div className="py-6 space-y-4">
+      <div className="px-6 flex items-center justify-between">
+        <h2 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] flex items-center gap-2">
+          <Sparkles size={12} className="text-orange-500" /> Promos por tiempo limitado
+        </h2>
+      </div>
 
-                <div className="absolute inset-0 p-8 flex flex-col bg-gradient-to-t from-black/90 via-black/20 to-transparent">
-                  {/* Bloque Superior: Título y Descripción */}
-                  <div className="flex-1">
-                    <h3 className="text-white text-2xl font-black italic uppercase tracking-tighter leading-none">
-                      {combo.title}
-                    </h3>
-                    <p className="text-gray-400 text-xs mt-2 font-medium line-clamp-2 italic">
-                      {combo.description}
-                    </p>
-                  </div>
-
-                  {/* Bloque Inferior: Precio y Botón */}
-                  <div className="flex justify-between items-center pt-4">
-                    <span className="text-white text-xl font-black italic">${combo.price}</span>
-                    <button
-                      onClick={() => addToCart({ ...combo, name: combo.title })}
-                      disabled={!isOpen}
-                      className={`px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest transition-all ${
-                        isOpen
-                          ? 'bg-white text-black active:scale-95 shadow-lg'
-                          : 'bg-white/20 text-white/50 cursor-not-allowed'
-                      }`}
-                    >
-                      {isOpen ? '+ Agregar' : 'Cerrado'}
-                    </button>
-                  </div>
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2"
+      >
+        {combos.map((combo: any) => (
+          <div 
+            key={combo.id}
+            className="min-w-[85%] snap-center pl-6 first:pl-6 last:pr-6" // El 85% es la clave de la usabilidad
+          >
+            <div className="relative h-64 bg-black rounded-[2.5rem] p-8 flex flex-col justify-between overflow-hidden shadow-2xl border border-white/5">
+              {combo.image_url && (
+                <div className="absolute inset-0 z-0">
+                  <img src={combo.image_url} className="w-full h-full object-cover opacity-50" alt={combo.title} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
+              )}
+
+              <div className="relative z-10 space-y-1">
+                <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">
+                  {combo.title}
+                </h3>
+                <p className="text-gray-300 text-xs font-bold leading-tight line-clamp-2">
+                  {combo.description}
+                </p>
               </div>
-            ))}
+
+              <div className="relative z-10 flex justify-between items-end">
+                <span className="text-2xl font-black text-white italic tracking-tighter">
+                  ${combo.price}
+                </span>
+                
+                <button
+                  onClick={() => addToCart(combo)}
+                  disabled={!isOpen}
+                  className={`px-6 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-all active:scale-90 ${
+                    isOpen ? 'bg-white text-black shadow-lg shadow-white/10' : 'bg-white/10 text-white/30'
+                  }`}
+                >
+                  <Plus size={14} /> Agregar
+                </button>
+              </div>
+            </div>
           </div>
-        </motion.section>
+        ))}
+      </div>
+
+      {/* Dots */}
+      {combos.length > 1 && (
+        <div className="flex justify-center gap-1.5 pt-1">
+          {combos.map((_: any, i: number) => (
+            <motion.div
+              key={i}
+              animate={{ 
+                width: i === activeIndex ? 16 : 6,
+                backgroundColor: i === activeIndex ? '#f97316' : '#333',
+              }}
+              className="h-1.5 rounded-full transition-all duration-300"
+            />
+          ))}
+        </div>
       )}
-    </AnimatePresence>
+    </div>
   );
 }
