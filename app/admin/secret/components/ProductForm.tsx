@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; //
 import { supabase } from '@/lib/supabase';
 import { Plus, Trash2, Loader2, Pencil, ImageIcon, X } from 'lucide-react';
 
@@ -8,6 +8,9 @@ export default function ProductForm() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  
+  // Referencia para el formulario para controlar el scroll exacto
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Estado unificado para el formulario
   const [formData, setFormData] = useState({
@@ -47,7 +50,9 @@ export default function ProductForm() {
       category_id: p.category_id,
       image_url: p.image_url || ''
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Ahora scrolea exactamente al inicio del formulario
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const resetForm = () => {
@@ -123,6 +128,7 @@ export default function ProductForm() {
   return (
     <div className="space-y-8 pb-20">
       <form
+        ref={formRef} //
         onSubmit={handleSubmit}
         className={`p-6 md:p-8 rounded-[2.5rem] border transition-all duration-500 shadow-2xl bg-[#111] ${
           editingId ? 'border-orange-400' : 'border-white/5'
@@ -205,7 +211,7 @@ export default function ProductForm() {
         </div>
       </form>
 
-      {/* LISTADO */}
+      {/* LISTADO DE PRODUCTOS */}
       <div className="grid gap-3">
         {products.map(p => (
           <div key={p.id} className="flex items-center bg-[#141414] border border-white/5 p-3 rounded-[2rem] gap-3 w-full">
