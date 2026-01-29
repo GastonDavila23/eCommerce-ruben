@@ -8,7 +8,7 @@ export const metadata = {
   openGraph: {
     title: 'RW-CARTA | Menú Digital',
     description: 'Panchos a la masa, promociones y extras de kiosco.',
-    url: 'https://e-commerce-ruben.vercel.app/',
+    url: 'https://www.rwalacarta.com/',
     siteName: 'RW-CARTA',
     images: [
       {
