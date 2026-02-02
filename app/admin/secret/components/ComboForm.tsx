@@ -73,7 +73,7 @@ export default function ComboForm() {
         ref={formRef} 
         onSubmit={handleUploadCombo} 
         className={`p-6 md:p-8 rounded-[2.5rem] shadow-xl space-y-4 transition-all duration-500 border ${
-          editingId ? 'bg-orange-600 border-orange-400' : 'bg-gradient-to-br from-orange-600 to-red-700 border-transparent'
+          editingId ? 'border-orange-400' : 'bg-[#111] border-transparent'
         }`}
       >
         <input type="hidden" name="currentImageUrl" />

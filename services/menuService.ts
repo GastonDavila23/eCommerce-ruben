@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 export const fetchMenuData = async () => {
   const [catRes, prodRes, combRes, schedRes] = await Promise.all([
     supabase.from('categories').select('*').order('order', { ascending: true }),
-    supabase.from('products').select('*, categories(name)'),
+    supabase.from('products').select('*, categories(name), is_available'),
     supabase.from('combos').select('*').eq('active', true),
     supabase.from('schedules').select('*')
   ]);

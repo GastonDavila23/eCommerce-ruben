@@ -8,11 +8,8 @@ export default function ProductForm() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  
-  // Referencia para el formulario para controlar el scroll exacto
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Estado unificado para el formulario
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -33,7 +30,6 @@ export default function ProductForm() {
     
     if (cat) {
         setCategories(cat);
-        // Setear categoría por defecto si el form está vacío
         if (!formData.category_id && cat.length > 0) {
             setFormData(prev => ({ ...prev, category_id: cat[0].id }));
         }
@@ -51,7 +47,6 @@ export default function ProductForm() {
       image_url: p.image_url || ''
     });
     
-    // Ahora scrolea exactamente al inicio del formulario
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
@@ -74,7 +69,6 @@ export default function ProductForm() {
     try {
       let finalImageUrl = formData.image_url;
 
-      // 1. Subir imagen si hay un archivo nuevo
       if (selectedFile) {
         const fileExt = selectedFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
@@ -99,7 +93,6 @@ export default function ProductForm() {
       };
 
       if (editingId) {
-        // 2. Editar
         const { error } = await supabase
           .from('products')
           .update(pData)
@@ -107,7 +100,6 @@ export default function ProductForm() {
         
         if (error) throw error;
       } else {
-        // 3. Crear
         const { error } = await supabase
           .from('products')
           .insert([pData]);
@@ -128,7 +120,7 @@ export default function ProductForm() {
   return (
     <div className="space-y-8 pb-20">
       <form
-        ref={formRef} //
+        ref={formRef}
         onSubmit={handleSubmit}
         className={`p-6 md:p-8 rounded-[2.5rem] border transition-all duration-500 shadow-2xl bg-[#111] ${
           editingId ? 'border-orange-400' : 'border-white/5'

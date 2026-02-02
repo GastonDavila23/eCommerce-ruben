@@ -52,12 +52,10 @@ export default function QRGenerator() {
     };
 
     return (
-        <div className="p-8 bg-white rounded-[2.5rem] text-black flex flex-col items-center gap-6 border border-gray-100 shadow-sm">
+        <div className="p-8 bg-[#111] rounded-[2.5rem] text-black flex flex-col items-center gap-6 border border-[#111] shadow-sm">
 
             <div className="flex flex-col items-center gap-1">
-
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Herramientas de Difusión</h3>
-                <p className="text-lg font-black italic uppercase tracking-tighter">Tu Carta Digital</p>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Tu carta digital</h3>
             </div>
 
             <div className="bg-white p-4 rounded-[2rem] border-4 border-gray-50 shadow-inner">
