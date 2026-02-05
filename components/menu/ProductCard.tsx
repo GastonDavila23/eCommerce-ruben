@@ -14,7 +14,7 @@ export default function ProductCard({ product, isOpenBusiness, onOpenModal }: an
   const isInCart = !!cartItem;
 
   return (
-    <div className="border-b border-gray-50">
+    <div className="bg-[#f9f9f9] p-2 border-b border-gray-50 rounded-2xl shadow-sm mb-2">
       {/* CABECERA DEL ACORDEÓN */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -26,8 +26,8 @@ export default function ProductCard({ product, isOpenBusiness, onOpenModal }: an
           </span>
           <span className="text-gray-400 font-bold text-sm mt-1">${product.price}</span>
         </div>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} className="bg-gray-50 p-2 rounded-full">
-          <ChevronDown size={18} className="text-gray-300" />
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} className="bg-black p-2 rounded-2xl pr-4 pl-4">
+          <ChevronDown size={18} className="text-white" />
         </motion.div>
       </button>
 
