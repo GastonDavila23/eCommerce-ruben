@@ -7,7 +7,6 @@ import Header from '@/components/ui/Header';
 import ComboSlider from '@/components/menu/ComboSlider';
 import StatusBanner from '@/components/ui/StatusBanner';
 import ProductList from '@/components/menu/ProductList';
-import ProductModal from '@/components/menu/ProductModal';
 import Navbar from '@/components/ui/Navbar';
 import FloatingCart from '@/components/ui/FloatingCart';
 import { Loader2 } from 'lucide-react';
@@ -50,15 +49,14 @@ export default function MenuPage() {
         <ProductList 
           categories={categories}
           products={products}
+          combos={combos}
           filter={filter}
-          isOpen={isOpen}
-          onOpenModal={(prod: any) => setSelectedProduct(prod)}
+          isOpenBusiness={isOpen}
         />
       </main>
 
       <FloatingCart isOpenBusiness={isOpen} />
       <Navbar />
-      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
     </div>
   );
 }

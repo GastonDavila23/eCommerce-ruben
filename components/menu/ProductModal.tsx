@@ -12,17 +12,26 @@ export default function ProductModal({ product, onClose }: any) {
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm p-4 flex items-end justify-center"
+        className="fixed inset-0 z-[70] bg-black/80 backdrop-blur-md p-4 flex items-center justify-center"
+        onClick={onClose}
       >
         <motion.div 
-          initial={{ y: '100%' }} 
-          animate={{ y: 0 }} 
-          exit={{ y: '100%' }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="bg-white w-full max-w-md rounded-[3rem] overflow-hidden max-h-[90vh] flex flex-col shadow-2xl"
+          initial={{ scale: 0.9, opacity: 0 }} 
+          animate={{ scale: 1, opacity: 1 }} 
+          exit={{ scale: 0.9, opacity: 0 }}
+          className="bg-gray-100 w-[90%] h-[90%] max-w-lg overflow-hidden flex flex-col shadow-2xl relative"
+          onClick={(e) => e.stopPropagation()} 
         >
-          {/* Cabecera con Imagen */}
-          <div className="relative h-72 bg-gray-100 flex-shrink-0">
+          {/* Botón */}
+          <button 
+            onClick={onClose} 
+            className="absolute top-4 right-4 z-10 text-gray-400 hover:text-black p-2 transition-colors"
+          >
+            <X size={24} strokeWidth={1.5} />
+          </button>
+
+          {/* Cabecera */}
+          <div className="relative h-[40%] bg-gray-50 flex-shrink-0">
             {product.image_url ? (
               <img 
                 src={product.image_url} 
@@ -30,70 +39,56 @@ export default function ProductModal({ product, onClose }: any) {
                 className="w-full h-full object-cover" 
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-200 uppercase font-black text-4xl italic tracking-tighter">
+              <div className="w-full h-full flex items-center justify-center text-gray-200 uppercase font-black text-2xl italic">
                 Rubén
               </div>
             )}
-            
-            {/* Botón de cierre flotante */}
-            <button 
-              onClick={onClose} 
-              className="absolute top-6 right-6 bg-black/20 backdrop-blur-md text-white p-2 rounded-full border border-white/30 active:scale-90 transition-transform"
-            >
-              <X size={20} />
-            </button>
           </div>
 
-          {/* Contenido scrolleable */}
-          <div className="p-8 space-y-8 overflow-y-auto no-scrollbar">
+          {/* Contenido del Modal */}
+          <div className="flex-1 p-6 flex flex-col overflow-hidden">
+            
             {/* Título y Categoría */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-black bg-gray-100 px-4 py-1.5 rounded-full text-gray-400 uppercase tracking-[0.2em]">
-                {product.categories?.name}
+            <div className="text-center mb-6">
+              <span className="text-1xl font-black text-gray-400 uppercase tracking-[0.2em]">
+                {product.categories?.name || 'Producto'}
               </span>
-              <div className="flex justify-between items-start pt-1">
-                <h2 className="text-4xl font-black leading-none italic uppercase tracking-tighter">
-                  {product.name}
-                </h2>
-                <p className="text-2xl font-black text-black">${product.price}</p>
-              </div>
+              <h2 className="text-2xl font-black leading-tight italic uppercase tracking-tighter text-black mt-1">
+                {product.name}
+              </h2>
             </div>
 
-            {/* Info rápida */}
-            <div className="flex justify-between border-y border-gray-50 py-5">
-              <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                <Clock size={16} className="text-gray-200" /> {product.cooking_time || "15-20 min"}
+            {/* Zona Central: Descripción Resaltada */}
+            <div className="flex-1 overflow-y-auto no-scrollbar space-y-6">
+              <div className="bg-white p-5 rounded-3xl">
+                <p className="text-1xl text-gray-700 leading-relaxed italic text-center">
+                  {product.description || "Nuestra preparación especial con ingredientes premium seleccionados por Rubén para garantizar el mejor sabor."}
+                </p>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                <Flame size={16} className="text-gray-200" /> Elaboración Propia
-              </div>
-            </div>
 
-            {/* Ingredientes (si existen) */}
-            {product.ingredients && product.ingredients.length > 0 && (
-              <div>
-                <h4 className="text-[10px] font-black uppercase text-gray-300 tracking-[0.3em] mb-4">Ingredientes Principales</h4>
-                <div className="flex flex-wrap gap-2">
-                  {product.ingredients.map((ing: string, index: number) => (
-                    <div key={index} className="flex items-center gap-1.5 bg-gray-50 px-3 py-2 rounded-2xl border border-gray-100">
-                      <CheckCircle2 size={12} className="text-green-500" />
-                      <span className="text-xs font-bold text-gray-600 lowercase">{ing}</span>
-                    </div>
-                  ))}
+              {/* Ingredientes */}
+              {product.ingredients && product.ingredients.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-1xl font-black uppercase text-gray-400 tracking-[0.2em] text-center">
+                    Ingredientes
+                  </h4>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {product.ingredients.map((ing: string, index: number) => (
+                      <div key={index} className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full">
+                        <CheckCircle2 size={12} className="text-green-500" />
+                        <span className="text-[11px] font-bold text-gray-600 lowercase">{ing}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {/* Descripción */}
-            <div className="space-y-3">
-              <h4 className="text-[10px] font-black uppercase text-gray-300 tracking-[0.3em]">Descripción</h4>
-              <p className="text-sm text-gray-500 leading-relaxed italic">
-                {product.description || "Nuestra preparación especial con ingredientes premium seleccionados por Rubén para garantizar el mejor sabor."}
-              </p>
+              )}
             </div>
 
-            {/* Selector de Cantidad (Global) */}
-            <div className="pt-4 pb-2">
+            {/* Footer: Precio y Selector */}
+            <div className="p-2 bg-white mt-auto rounded-full">
+              <div className="flex justify-center items-center">
+                <p className="text-3xl font-black text-black tracking-tighter">${product.price}</p>
+              </div>
               <QuantitySelector product={product} />
             </div>
           </div>

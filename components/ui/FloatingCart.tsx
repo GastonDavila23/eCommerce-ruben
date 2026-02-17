@@ -16,6 +16,8 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
   const [paymentMethod, setPaymentMethod] = useState<'efectivo' | 'transferencia'>('efectivo');
   const [kioscoExtra, setKioscoExtra] = useState('');
 
+  if (cart.length === 0) return null;
+
   const sendWhatsApp = () => {
     if (!isOpenBusiness) return;
     const phone = "5492634325471";
@@ -24,12 +26,12 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
     msg += `--- \n`;
     msg += `📍 *Entrega:* ${deliveryMethod === 'delivery' ? 'Delivery' : 'Local'}\n`;
     msg += `💳 *Pago:* ${paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}\n`;
-    
+
     if (kioscoExtra.trim()) {
       msg += `🍬 *Extra Kiosco:* ${kioscoExtra}\n`;
       msg += `_(Por favor, confírmame el precio de los extras)_\n`;
     }
-    
+
     msg += `\n*Total Comida: $${total}*\n`;
     msg += `--- \n¿Me confirmás el pedido?`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -37,7 +39,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
 
   return (
     <>
-      <button 
+      <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-24 right-6 z-50 bg-black text-white p-4 rounded-full shadow-2xl active:scale-90 transition-transform"
       >
@@ -51,11 +53,11 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end justify-center"
           >
-            <motion.div 
+            <motion.div
               initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
               className="bg-white w-full max-w-md rounded-t-[3rem] p-6 pb-10 max-h-[92vh] flex flex-col shadow-2xl overflow-y-auto no-scrollbar"
             >
@@ -118,7 +120,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                   {/* Campo de Texto Kiosco */}
                   <div className="bg-gray-50 p-3 rounded-2xl flex items-start gap-3 border border-gray-100">
                     <Candy size={14} className="text-pink-500 mt-1 shrink-0" />
-                    <textarea 
+                    <textarea
                       placeholder="¿Algo más del kiosco? (Cigarrillos, snacks...)"
                       value={kioscoExtra}
                       onChange={(e) => setKioscoExtra(e.target.value)}
@@ -132,11 +134,11 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                         <span className="text-[9px] font-black uppercase text-gray-300 tracking-[0.2em]">Subtotal Comida</span>
                         <span className="text-3xl font-black italic tracking-tighter leading-none">${total}</span>
                       </div>
-                      
+
                       {/* Aviso dinámico si hay extras */}
                       {kioscoExtra.trim() && (
-                        <motion.div 
-                          initial={{ opacity: 0, x: -10 }} 
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           className="flex justify-between items-center"
                         >
@@ -147,17 +149,16 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
                         </motion.div>
                       )}
                     </div>
-                    
-                    <button 
-                      onClick={sendWhatsApp} 
+
+                    <button
+                      onClick={sendWhatsApp}
                       disabled={!isOpenBusiness}
-                      className={`w-full py-4 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${
-                        isOpenBusiness ? 'bg-[#25D366] text-white shadow-lg shadow-green-500/20' : 'bg-gray-100 text-gray-400'
-                      }`}
+                      className={`w-full py-4 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${isOpenBusiness ? 'bg-[#25D366] text-white shadow-lg shadow-green-500/20' : 'bg-gray-100 text-gray-400'
+                        }`}
                     >
                       {isOpenBusiness ? (
                         <>
-                          <Send size={16} /> 
+                          <Send size={16} />
                           {kioscoExtra.trim() ? "Consultar Total Final" : "Confirmar pedido"}
                         </>
                       ) : (
