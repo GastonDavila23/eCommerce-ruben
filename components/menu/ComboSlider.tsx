@@ -41,9 +41,9 @@ export default function ComboSlider({ combos, isOpen }: any) {
           return (
             <div 
               key={combo.id}
-              className="min-w-[85%] snap-center pl-6 first:pl-6 last:pr-6"
+              className="min-w-[85%] snap-center pl-6 first:pl-6 last:pr-6 bg-transparent"
             >
-              <div className="relative h-64 bg-black rounded-[2.5rem] p-8 flex flex-col justify-between overflow-hidden border border-white/5 shadow-xl">
+              <div className="relative h-64 bg-black rounded-[2rem] p-8 flex flex-col justify-between overflow-hidden">
                 {combo.image_url && (
                   <div className="absolute inset-0 z-0">
                     <img src={combo.image_url} className="w-full h-full object-cover opacity-50" alt={combo.title} />
@@ -52,16 +52,16 @@ export default function ComboSlider({ combos, isOpen }: any) {
                 )}
 
                 <div className="relative z-10 space-y-1">
-                  <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">
+                  <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">
                     {combo.title}
                   </h3>
-                  <p className="text-gray-300 text-xs font-bold leading-tight line-clamp-2">
+                  <p className="text-gray-300 text-sm font-bold leading-tight line-clamp-2">
                     {combo.description}
                   </p>
                 </div>
 
                 <div className="relative z-10 flex justify-between items-end">
-                  <span className="text-2xl font-black text-white italic tracking-tighter">
+                  <span className="text-3xl font-black text-white italic tracking-tighter">
                     ${combo.price}
                   </span>
                   

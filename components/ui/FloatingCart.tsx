@@ -41,7 +41,7 @@ export default function FloatingCart({ isOpenBusiness }: FloatingCartProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 right-6 z-50 bg-black text-white p-4 rounded-full shadow-2xl active:scale-90 transition-transform"
+        className="fixed bottom-24 right-6 z-50 bg-app-fg text-white p-4 rounded-full shadow-2xl active:scale-90 transition-transform"
       >
         <ShoppingCart size={24} />
         {totalItems > 0 && (

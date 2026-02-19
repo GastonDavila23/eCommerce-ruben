@@ -38,7 +38,7 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:bottom-6 md:left-6 md:right-6">
-        <div className="mx-auto bg-black/90 backdrop-blur-xl flex justify-between items-center shadow-2xl border-t border-white/10 w-full px-4 py-2 md:max-w-md md:rounded-[2.5rem] md:border md:p-2">
+        <div className="mx-auto bg-app-fg backdrop-blur-2xl flex justify-between items-center shadow-2xl border-t border-white/10 w-full px-4 py-2 md:max-w-md md:rounded-[2.5rem] md:border md:p-2">
           {navItems.map((item) => (
             <button 
               key={item.id} 

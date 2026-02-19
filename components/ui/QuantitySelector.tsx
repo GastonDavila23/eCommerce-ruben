@@ -10,22 +10,24 @@ export default function QuantitySelector({ product }: { product: any }) {
   if (qty === 0) return null;
 
   return (
-    <div className="flex w-full items-center bg-gray-100 rounded-xl h-[42px] overflow-hidden border border-gray-200">
-      <button 
-        onClick={() => removeFromCart(product.id)}
-        className="flex-1 h-full flex items-center justify-center active:bg-gray-200 transition-colors"
-      >
-        {qty === 1 ? <Trash2 size={14} className="text-red-500" /> : <Minus size={14} />}
-      </button>
-      
-      <span className="flex-1 text-center font-black text-xs italic">{qty}</span>
-      
-      <button 
-        onClick={() => addToCart(product)}
-        className="flex-1 h-full flex items-center justify-center active:bg-gray-200 transition-colors"
-      >
-        <Plus size={14} />
-      </button>
-    </div>
+    <div className="flex w-full px-2 h-[42px] items-center bg-gray-200 rounded-full overflow-hidden">
+  <button 
+    onClick={() => removeFromCart(product.id)}
+    className="flex-1 h-full flex items-center justify-center active:bg-gray-200 transition-colors"
+  >
+    {qty === 1 ? <Trash2 size={16} className="text-red-500" /> : <Minus size={16} />}
+  </button>
+  
+  <span className="flex-1 text-center font-black text-sm italic text-app-fg">
+    {qty}
+  </span>
+  
+  <button 
+    onClick={() => addToCart(product)}
+    className="flex-1 h-full flex items-center justify-center active:bg-gray-200 transition-colors"
+  >
+    <Plus size={16} />
+  </button>
+</div>
   );
 }
