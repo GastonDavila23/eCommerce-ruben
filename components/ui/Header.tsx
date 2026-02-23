@@ -19,9 +19,9 @@ export default function Header({ isOpen, categories, filter, setFilter }: Header
     : categories.slice(0, VISIBLE_LIMIT);
 
   return (
-    <header className="sticky top-0 bg-white backdrop-blur-3xl z-40 px-6 pt-4 pb-4">
+    <header className="sticky top-0 bg-[#333] backdrop-blur-3xl z-40 px-6 pt-4 pb-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-black italic leading-none text-app-fg pl-1 tracking-[0.2em]">
+        <h1 className="text-4xl font-black italic leading-none text-white pl-1 tracking-[0.2em]">
           RW-CARTA
         </h1>
         
@@ -43,7 +43,7 @@ export default function Header({ isOpen, categories, filter, setFilter }: Header
         <button
           onClick={() => setFilter(null)}
           className={`py-3 px-2 rounded-full text-[12px] font-black uppercase tracking-widest leading-tight break-words ${
-            !filter ? 'bg-app-fg text-white' : 'bg-app-bg text-gray-400'
+            !filter ? 'bg-orange-500 text-white' : 'bg-white text-gray-600'
           }`}
         >
           Todos
@@ -54,7 +54,7 @@ export default function Header({ isOpen, categories, filter, setFilter }: Header
             key={cat.id}
             onClick={() => setFilter(cat.id)}
             className={`py-3 px-2 rounded-full text-[12px] font-black uppercase tracking-widest leading-tight break-words ${
-              filter === cat.id ? 'bg-app-fg text-white' : 'bg-app-bg text-gray-400'
+              filter === cat.id ? 'bg-orange-500 text-white' : 'bg-white text-gray-600'
             }`}
           >
             {cat.name}
@@ -65,12 +65,12 @@ export default function Header({ isOpen, categories, filter, setFilter }: Header
         {hasMore && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="py-3 px-2 rounded-full text-[12px] font-black uppercase tracking-widest bg-orange-100 text-orange-600 flex items-center justify-center gap-1 active:scale-95 transition-all"
+            className="py-3 px-2 rounded-full text-[12px] font-black uppercase tracking-widest bg-orange-500 text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
           >
             {isExpanded ? (
-              <>Menos <ChevronUp size={12} /></>
+              <>Menos <ChevronUp size={16} /></>
             ) : (
-              <>Más <ChevronDown size={12} /></>
+              <>Más <ChevronDown size={16} /></>
             )}
           </button>
         )}

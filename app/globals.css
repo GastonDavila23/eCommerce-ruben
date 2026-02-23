@@ -1,39 +1,20 @@
 @import "tailwindcss";
 
-:root {
-  /* Fondo principal (Crema suave) */
-  --background: #eae4cc;
-  /* Texto principal y elementos oscuros (Casi negro) */
-  --foreground: #1f1d1d;
-
-  /* Color de Acción / Primario (Naranja) */
-  --primary: #fb5b2b;
-  --primary-foreground: #ffffff;
-  
-  /* Color Secundario / Acento (Verde Bosque) */
-  --secondary: #2d4135;
-  --secondary-foreground: #eae4cc;
-
-  /* Bordes */
-  --border: #d1ccb8; /* Una versión un poco más oscura del crema */
+@theme {
+  /* Fondo principal */
+  --color-fondo: #eae4cc;
+  /* Texto y elementos oscuros */
+  --color-negro: #1f1d1d;
+  /* Naranja de acción */
+  --color-primario: #fb5b2b;
+  /* Verde de acento */
+  --color-secundario: #2d4135;
 }
 
-
-@theme inline {
-  --color-app-bg: var(--background);
-  --color-app-fg: var(--foreground);
-  
-  --color-brand-primary: var(--primary);
-  --color-brand-primary-fg: var(--primary-foreground);
-  
-  --color-brand-secondary: var(--secondary);
-  --color-brand-secondary-fg: var(--secondary-foreground);
-  
-  --color-app-border: var(--border);
-}
-
+/* Aplicación de colores base al sitio */
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-fondo);
+  color: var(--color-negro);
+  margin: 0;
   font-family: ui-sans-serif, system-ui, sans-serif;
 }
