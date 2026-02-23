@@ -2,13 +2,12 @@
 import { useState, useMemo } from 'react';
 import { List, Search, ImageIcon, Pencil, Trash2, ChevronLeft, ChevronRight, Save, Loader2 } from 'lucide-react';
 
-export default function InventoryTable({ products, onEdit, onDelete, onSavePrices, isSavingPrices }: any) {
+export default function InventoryTable({ products, onEdit, onDelete, onSavePrices, isSavingPrices, onToggleStatus }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pendingPriceChanges, setPendingPriceChanges] = useState<Record<string, number>>({});
   const ROWS_PER_PAGE = 8;
 
-  // Filtrado optimizado: solo se recalcula si cambia 'searchTerm' o 'products'
   const filteredProducts = useMemo(() => {
     return products.filter((p: any) => 
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -18,7 +17,6 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
 
   const totalPages = Math.ceil(filteredProducts.length / ROWS_PER_PAGE) || 1;
 
-  // Paginación optimizada
   const currentProducts = useMemo(() => {
     const firstIndex = (currentPage - 1) * ROWS_PER_PAGE;
     return filteredProducts.slice(firstIndex, firstIndex + ROWS_PER_PAGE);
@@ -30,7 +28,11 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
     <div className="space-y-4">
       {Object.keys(pendingPriceChanges).length > 0 && (
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md">
-          <button onClick={() => { onSavePrices(pendingPriceChanges); setPendingPriceChanges({}); }} disabled={isSavingPrices} className="w-full bg-orange-600 text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl flex items-center justify-center gap-3 border border-orange-400">
+          <button 
+            onClick={() => { onSavePrices(pendingPriceChanges); setPendingPriceChanges({}); }} 
+            disabled={isSavingPrices} 
+            className="w-full bg-orange-600 text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl flex items-center justify-center gap-3 border border-orange-400"
+          >
             {isSavingPrices ? <Loader2 className="animate-spin" /> : <><Save size={18}/> Guardar {Object.keys(pendingPriceChanges).length} cambios</>}
           </button>
         </div>
@@ -60,15 +62,16 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
         <table className="w-full text-left table-fixed">
           <thead>
             <tr className="bg-white/5 border-b border-white/5 uppercase text-[9px] text-gray-600 font-black tracking-widest">
-              <th className="p-3 w-14">Img</th>
+              <th className="p-3 w-14 text-center">Img</th>
               <th className="p-3">Producto</th>
+              <th className="p-3 w-16 text-center">Stock</th>
               <th className="p-3 w-24">Precio $</th>
               <th className="p-3 w-20 text-right pr-5">Acción</th>
             </tr>
           </thead>
           <tbody>
             {currentProducts.map((p: any) => (
-              <tr key={p.id} className="border-b border-white/5 h-[64px]">
+              <tr key={p.id} className={`border-b border-white/5 h-[64px] transition-all duration-300 ${!p.is_active ? 'opacity-40 grayscale-[0.5]' : ''}`}>
                 <td className="p-2 w-14">
                   <div className="w-10 h-10 rounded-lg bg-white/5 overflow-hidden flex items-center justify-center">
                     {p.image_url ? <img src={p.image_url} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-white/10" />}
@@ -79,6 +82,14 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
                     <span className="text-white font-bold text-[12px] truncate uppercase italic">{p.name}</span>
                     <span className="text-[8px] text-gray-500 font-black uppercase truncate">{p.categories?.name}</span>
                   </div>
+                </td>
+                <td className="p-2 w-16 text-center">
+                  <button
+                    onClick={() => onToggleStatus(p.id, !p.is_active)}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none ${p.is_active ? 'bg-green-600' : 'bg-white/10'}`}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-lg transition duration-300 ease-in-out ${p.is_active ? 'translate-x-4.5' : 'translate-x-1'}`} />
+                  </button>
                 </td>
                 <td className="p-2 w-24">
                   <input 
@@ -98,7 +109,7 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
             ))}
             {Array.from({ length: emptyRows }).map((_, idx) => (
               <tr key={`empty-${idx}`} className="h-[64px] border-b border-white/[0.02] opacity-5">
-                <td colSpan={4} className="text-center text-[8px] text-gray-600 uppercase italic">Espacio Libre</td>
+                <td colSpan={5} className="text-center text-[8px] text-gray-600 uppercase italic">Espacio Libre</td>
               </tr>
             ))}
           </tbody>

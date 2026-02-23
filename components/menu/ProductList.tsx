@@ -31,9 +31,13 @@ export default function ProductList({ categories, products, combos, isOpenBusine
   return (
     <div className="space-y-8 pb-32 w-full max-w-full overflow-x-hidden px-1">
       {displayCategories.map((category: any) => {
-        const items = category.is_virtual
+        // REFACTORIZACIÓN: Filtramos para que solo aparezcan items con is_active === true
+        const rawItems = category.is_virtual
           ? combos.map((c: any) => ({ ...c, name: c.title, is_combo: true }))
           : products.filter((p: any) => p.category_id === category.id);
+
+        // Se filtran los productos desactivados aquí
+        const items = rawItems.filter((item: any) => item.is_active !== false);
 
         if (items.length === 0) return null;
 
@@ -50,6 +54,7 @@ export default function ProductList({ categories, products, combos, isOpenBusine
                   {items.map((item: any, idx: number) => {
                     const cartItem = cart.find((i: any) => i.id === item.id);
                     const isInCart = !!cartItem;
+                    // Mantenemos isAvailable para el botón (ej. stock temporal)
                     const isAvailable = item.is_available !== false;
 
                     return (
