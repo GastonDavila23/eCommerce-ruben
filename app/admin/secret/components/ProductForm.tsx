@@ -9,19 +9,9 @@ import { supabase } from '@/lib/supabase';
 export default function ProductForm() {
   const { products, categories, combos, loading, isSavingPrices, upsertProduct, updateBulkPrices, fetchData } = useProducts();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ 
-    name: '', 
-    description: '', 
-    price: '', 
-    category_id: '', 
-    image_url: '', 
-    ingredients: [] as string[] 
-  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState({ name: '', description: '', price: '', category_id: '', image_url: '', ingredients: [] as string[] });
 
-  /**
-   * Actualiza el estado de stock (is_active) en Supabase.
-   * Al ser exitoso, recarga los datos para que la tabla refleje el cambio visualmente.
-   */
   const handleToggleStatus = async (id: string, newStatus: boolean) => {
     try {
       const { error } = await supabase
@@ -31,7 +21,6 @@ export default function ProductForm() {
 
       if (error) throw error;
       
-      // Refrescamos la lista de productos para ver el cambio de opacidad en la tabla
       fetchData(); 
     } catch (error) {
       console.error('Error al actualizar stock:', error);
@@ -41,6 +30,7 @@ export default function ProductForm() {
 
   const handleEditInit = (p: any) => {
     setEditingId(p.id);
+    setSelectedFile(null);
     setFormData({ 
       name: p.name, 
       description: p.description || '', 
@@ -55,6 +45,7 @@ export default function ProductForm() {
     const success = await upsertProduct(formData, file, editingId);
     if (success) {
       setEditingId(null);
+      setSelectedFile(null);
       setFormData({ 
         name: '', 
         description: '', 
@@ -71,6 +62,8 @@ export default function ProductForm() {
       <ProductFormEditor 
         formData={formData} 
         setFormData={setFormData}
+        selectedFile={selectedFile}
+        setSelectedFile={setSelectedFile}
         categories={categories} 
         loading={loading}
         editingId={editingId} 
@@ -89,45 +82,8 @@ export default function ProductForm() {
           } 
         }}
         onSavePrices={updateBulkPrices}
-        onToggleStatus={handleToggleStatus} // Prop para el switch estilo iOS
+        onToggleStatus={handleToggleStatus}
       />
-
-      {/* Listado de Combos */}
-      <div className="space-y-4">
-        <h2 className="text-[11px] font-black uppercase text-orange-500 tracking-widest flex items-center gap-2">
-          <Sparkles size={14} /> Promos Activas
-        </h2>
-        <div className="grid gap-3">
-          {combos.map((c: any) => (
-            <div key={c.id} className="flex items-center bg-[#1A1612] p-3 rounded-[2rem] border border-orange-500/10">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/5 overflow-hidden flex-shrink-0">
-                {c.image_url ? (
-                  <img src={c.image_url} className="w-full h-full object-cover" />
-                ) : (
-                  <ImageIcon size={16} className="text-orange-500/10 m-auto" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0 ml-3">
-                <h4 className="text-orange-100 text-[12px] font-bold truncate uppercase italic tracking-tighter">
-                  {c.title}
-                </h4>
-                <p className="text-[10px] text-orange-500/70 font-black">${c.price}</p>
-              </div>
-              <button 
-                onClick={async () => { 
-                  if(confirm('¿Borrar combo?')) { 
-                    await supabase.from('combos').delete().eq('id', c.id); 
-                    fetchData(); 
-                  } 
-                }} 
-                className="p-2 text-red-500 bg-red-500/10 rounded-full active:scale-75 transition-all"
-              >
-                <Trash2 size={14}/>
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
