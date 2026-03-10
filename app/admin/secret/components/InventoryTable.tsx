@@ -1,6 +1,6 @@
 'use client';
 import { useState, useMemo } from 'react';
-import { List, Search, ImageIcon, Pencil, Trash2, ChevronLeft, ChevronRight, Save, Loader2 } from 'lucide-react';
+import { List, Search, ImageIcon, Pencil, Trash2, ChevronLeft, ChevronRight, Save, Loader2, PackageCheck, Eye, EyeOff, PackageX } from 'lucide-react';
 
 export default function InventoryTable({ products, onEdit, onDelete, onSavePrices, isSavingPrices, onToggleStatus }: any) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,40 +58,60 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[2rem] border border-white/5 bg-[#141414] shadow-2xl">
+      <div className="overflow-hidden rounded-[1rem] border border-white/5 bg-[#141414] shadow-2xl">
         <table className="w-full text-left table-fixed">
           <thead>
             <tr className="bg-white/5 border-b border-white/5 uppercase text-[9px] text-gray-600 font-black tracking-widest">
-              <th className="p-3 w-14 text-center">Img</th>
-              <th className="p-3">Producto</th>
-              <th className="p-3 w-16 text-center">Stock</th>
-              <th className="p-3 w-24">Precio $</th>
-              <th className="p-3 w-20 text-right pr-5">Acción</th>
+              <th className="p-3 w-14">Img</th>
+              <th className="p-3 w-40">Producto</th>
+              {/* <th className="p-3 w-10 text-center">Stock</th>
+              <th className="p-3 w-10 text-center">Ver</th> */}
+              <th className="p-3 w-14">Precio</th>
+              <th className="p-3 w-28 text-center">Acción</th>
             </tr>
           </thead>
           <tbody>
+
             {currentProducts.map((p: any) => (
+
+              // Cabecera de la tabla de stock
               <tr key={p.id} className={`border-b border-white/5 h-[64px] transition-all duration-300 ${!p.is_active ? 'opacity-40 grayscale-[0.5]' : ''}`}>
+
+                {/* Columna de imagen del producto */}
                 <td className="p-2 w-14">
-                  <div className="w-10 h-10 rounded-lg bg-white/5 overflow-hidden flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-white overflow-hidden flex items-center justify-center">
                     {p.image_url ? <img src={p.image_url} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-white/10" />}
                   </div>
                 </td>
-                <td className="p-2">
+
+                {/* Columna de nombre del producto y categoría */}
+                <td className="w-40">
                   <div className="flex flex-col truncate">
                     <span className="text-white font-bold text-[12px] truncate uppercase italic">{p.name}</span>
                     <span className="text-[8px] text-gray-500 font-black uppercase truncate">{p.categories?.name}</span>
                   </div>
                 </td>
-                <td className="p-2 w-16 text-center">
+
+                {/*  
+                <td className="p-2 w-14 text-center">
                   <button
-                    onClick={() => onToggleStatus(p.id, !p.is_active)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none ${p.is_active ? 'bg-green-600' : 'bg-white/10'}`}
+                    onClick={() => onToggleStatus(p.id, 'is_available', !p.is_available)}
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all active:scale-75 ${
+                      p.is_available ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
+                    }`}
                   >
-                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-lg transition duration-300 ease-in-out ${p.is_active ? 'translate-x-4.5' : 'translate-x-1'}`} />
+                    {p.is_available ? <PackageCheck size={16} /> : <PackageX size={16} />}
                   </button>
                 </td>
-                <td className="p-2 w-24">
+
+                
+                <td className="p-2 w-14 text-center">
+                  <button onClick={() => onToggleStatus(p.id, 'is_active', !p.is_active)} className={`w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all active:scale-75 ${p.is_active ? 'bg-blue-500/10 text-blue-500' : 'bg-gray-700/20 text-gray-600'}`}>{p.is_active ? <Eye size={16} /> : <EyeOff size={16} />}</button>
+                </td>
+                */}
+
+                {/* Columna de precio editable */}
+                <td className="p-2 w-14">
                   <input 
                     type="number" 
                     defaultValue={p.price} 
@@ -99,14 +119,40 @@ export default function InventoryTable({ products, onEdit, onDelete, onSavePrice
                     className={`w-full bg-white/5 border rounded-lg py-1 px-2 text-[12px] font-black italic outline-none transition-all ${pendingPriceChanges[p.id] ? 'border-orange-500 text-orange-400 bg-orange-500/5' : 'border-transparent text-white'}`} 
                   />
                 </td>
-                <td className="p-2 w-20 text-right pr-5">
-                  <div className="flex justify-end gap-1.5">
-                    <button onClick={() => onEdit(p)} className="w-7 h-7 flex items-center justify-center bg-orange-500/10 text-orange-500 rounded-md active:scale-90"><Pencil size={12}/></button>
-                    <button onClick={() => onDelete(p.id)} className="w-7 h-7 flex items-center justify-center bg-red-500/10 text-red-500 rounded-md active:scale-90"><Trash2 size={12}/></button>
+
+                {/* Columna de acciones: Editar y Eliminar */}
+                <td className="p-2 w-40 text-right pr-5">
+                  <div className="flex justify-end gap-2">
+
+                    {/* invisible */}
+                    <button 
+                      onClick={() => onToggleStatus(p.id, 'is_active', !p.is_active)} 
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all active:scale-75 ${p.is_active ? 'bg-blue-500/10 text-blue-500' : 'bg-gray-700/20 text-gray-600'}`}>{p.is_active ? <Eye size={16} /> : <EyeOff size={16} />}
+                    </button>
+
+                    {/* sin stock */}
+                    <button 
+                      onClick={() => onToggleStatus(p.id, 'is_available', !p.is_available)} 
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all active:scale-75 ${p.is_available ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>{p.is_available ? <PackageCheck size={16} /> : <PackageX size={16} />}
+                    </button>
+                    
+                    {/* editar */}
+                    <button 
+                      onClick={() => onEdit(p)} 
+                      className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto bg-orange-500/10 text-orange-500 transition-all active:scale-75"><Pencil size={12}/>
+                    </button>
+
+                    {/* borrar */}
+                    <button 
+                      onClick={() => onDelete(p.id)} 
+                      className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto bg-red-500/10 text-red-500 transition-all active:scale-75"><Trash2 size={12}/>
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
+
+            {/* Espacio libre en la tabla de stock */}
             {Array.from({ length: emptyRows }).map((_, idx) => (
               <tr key={`empty-${idx}`} className="h-[64px] border-b border-white/[0.02] opacity-5">
                 <td colSpan={5} className="text-center text-[8px] text-gray-600 uppercase italic">Espacio Libre</td>
