@@ -103,7 +103,7 @@ export default function ProductList({ categories, products, combos, isOpenBusine
                                 disabled={!isOpenBusiness || !isAvailable}
                                 className={`w-[90px] h-[42px] font-black text-[10px] uppercase rounded-full tracking-wider transition-all ${!isAvailable || !isOpenBusiness
                                   ? 'bg-gray-100 text-gray-400'
-                                  : 'bg-app-fg text-white active:scale-95'
+                                  : 'bg-black text-white active:scale-95'
                                   }`}
                               >
                                 {isAvailable ? 'Comprar' : 'Agotado'}
